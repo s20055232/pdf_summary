@@ -10,8 +10,8 @@ COPY requirements.txt ./
 RUN pip install -r requirements.txt
 COPY . .
 EXPOSE 8000
-CMD ["uvicorn", "--reload", "back.main:app"]
-
+CMD ["uvicorn", "back.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+#CMD ["gunicorn", "back.main:app", "--workers", "1", "--threads", "8", "--worker-class", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:8000"]
 # `production` image used for runtime
 #FROM python-base as production
 #ENV FASTAPI_ENV=production

@@ -12,8 +12,9 @@ fastapi = {extras = ["all"], version = "^0.95.2"}
 langchain = "^0.0.173"
 pypdf = "^3.8.1"
 openai = "^0.27.6"
-chromadb = "^0.3.23"
-
+tiktoken = "^0.4.0"
+#export HNSWLIB_NO_NATIVE=1
+llama-index = "^0.6.8"
 
 [build-system]
 requires = ["poetry-core"]

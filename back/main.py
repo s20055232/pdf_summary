@@ -6,6 +6,11 @@ from pydantic import BaseModel
 from dotenv import load_dotenv, find_dotenv
 from typing import Annotated
 from fastapi.responses import JSONResponse
+from pathlib import Path
+
+from llama_index import GPTVectorStoreIndex, download_loader
+from langchain.llms import OpenAI
+from langchain.chains.question_answering import load_qa_chain
 
 
 class UnicornException(Exception):
@@ -52,14 +57,16 @@ def upload_pdf_file(file: Annotated[UploadFile, File()]):
 
 @app.post("/parsing")
 def answer_query(item: Annotated[Item, Body()]):
+    CJKPDFReader = download_loader("CJKPDFReader")
+    loader = CJKPDFReader()
+    documents = loader.load_data(file=Path(f"./resource/{item.file_name}"))
     global past_loader
     if item.file_name in past_loader:
-        loader = past_loader[item.file_name]
+        index = past_loader[item.file_name]
     else:
-        loader = PyPDFLoader(f"./resource/{item.file_name}")
+        index = GPTVectorStoreIndex.from_documents(documents)
         past_loader[item.file_name] = loader
 
-    index = VectorstoreIndexCreator().from_loaders([loader])
     try:
         response = index.query(item.query)
         return response
